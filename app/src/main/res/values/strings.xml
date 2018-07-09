@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Autumn Lee</string>
+    <string name="init_text">Chúc Em Nghe Nhạc Vui Vẻ</string>
+    <string name="song_label">The Good, The Bad And The Ugly</string>
+    <string name="go_button">Select to Start App</string>
+    <string name="playlist_btn">Select to Open Playlist</string>
+    <string name="previous_btn">Select to Open Previous Song</string>
+    <string name="next_btn">Select to Open Next Song</string>
+    <string name="play_btn">Select to Play or Pause</string>
+</resources>

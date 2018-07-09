@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/background"
+    tools:context=".AndroidBuildingMusicPlayerActivity">
+    
+    <!-- Player Header -->
+    <LinearLayout 
+        android:id="@+id/player_header_bg"
+        android:layout_width="fill_parent"
+        android:layout_height="60dip"
+        android:layout_alignParentTop="true"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp">
+        
+        <!-- Song Title -->
+        <TextView 
+            android:id="@+id/songTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="#04b3d2"
+            android:textStyle="bold"
+            android:text="@string/song_label"
+            android:layout_marginTop="10dp"/>
+        <!-- Playlist button -->
+        <ImageButton
+            android:contentDescription="@string/playlist_btn"
+            android:id="@+id/btnPlaylist"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:src="@drawable/btn_playlist"
+            android:background="@null"/>
+    </LinearLayout>
+    
+    <!-- Player Footer -->
+    <LinearLayout 
+        android:id="@+id/player_footer_bg"
+        android:layout_width="fill_parent"
+        android:layout_height="120dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center">
+            <!-- Previous Button -->
+            <ImageButton
+                android:contentDescription="@string/previous_btn"
+                android:id="@+id/btnPrevious" 
+                android:src="@drawable/btn_previous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"/>
+            <!-- Play Button -->
+            <ImageButton
+                android:contentDescription="@string/play_btn"
+                android:id="@+id/btnPlay"
+                android:src="@drawable/btn_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"/>
+            <!-- Next Button -->
+            <ImageButton
+                android:contentDescription="@string/next_btn"
+                android:id="@+id/btnNext"
+                android:src="@drawable/btn_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"/>
+    </LinearLayout>
+    
+    <!-- Progress Bar/Seek bar -->
+    <SeekBar
+        	android:id="@+id/songProgressBar"
+	         android:layout_width="fill_parent"
+	         android:layout_height="wrap_content"
+	         android:layout_marginRight="20dp" 
+	         android:layout_marginLeft="20dp"
+	         android:layout_marginBottom="20dp"
+	    	 android:layout_above="@id/player_footer_bg"
+	    	 android:thumb="@drawable/seek_handler"
+	    	 android:progressDrawable="@drawable/seekbar_progress"
+	    	 android:paddingLeft="6dp"
+	    	 android:paddingRight="6dp"/>
+    
+    <!-- Timer Display -->
+    <LinearLayout 
+        android:id="@+id/timerDisplay"
+        android:layout_above="@id/songProgressBar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="10dp">
+        <!-- Current Duration Label -->
+        <TextView 
+            android:id="@+id/songCurrentDurationLabel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:textColor="#eeeeee"
+            android:textStyle="bold"/>
+        <!-- Total Duration Label -->
+        <TextView 
+            android:id="@+id/songTotalDurationLabel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:textColor="#04cbde"
+            android:textStyle="bold"/>
+    </LinearLayout>
+</RelativeLayout>
