@@ -9,32 +9,37 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
     private ImageButton btnPlay;
-    public ImageButton btnNext;
-    public ImageButton btnPrevious;
-    public ImageButton btnPlaylist;
+    private ImageButton btnNext;
+    private ImageButton btnPrevious;
+    private ImageButton btnPlaylist;
     private SeekBar songProgressBar;
     private TextView songTitleLabel;
     private TextView songCurrentDurationLabel;
     private TextView songTotalDurationLabel;
+    private ImageView imgView;
     // Media Player
     private  MediaPlayer mp;
     // Handler to update UI timer, progress bar etc,.
-    private Handler mHandler = new Handler();
-    public SongsManager songManager;
+    private Handler mHandler = new Handler();;
+    private SongsManager songManager;
     private Utilities utils;
     private int currentSongIndex = 0;
     private ArrayList<HashMap<String, String>> songsList = new ArrayList<>();
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,14 +47,23 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
         setContentView(R.layout.player);
 
         // All player buttons
-        btnPlay =  findViewById(R.id.btnPlay);
-        btnNext =  findViewById(R.id.btnNext);
-        btnPrevious =  findViewById(R.id.btnPrevious);
-        btnPlaylist =  findViewById(R.id.btnPlaylist);
-        songProgressBar =  findViewById(R.id.songProgressBar);
-        songTitleLabel =  findViewById(R.id.songTitle);
-        songCurrentDurationLabel =  findViewById(R.id.songCurrentDurationLabel);
-        songTotalDurationLabel =  findViewById(R.id.songTotalDurationLabel);
+        btnPlay = findViewById(R.id.btnPlay);
+        btnNext = findViewById(R.id.btnNext);
+        btnPrevious = findViewById(R.id.btnPrevious);
+        btnPlaylist = findViewById(R.id.btnPlaylist);
+        songProgressBar = findViewById(R.id.songProgressBar);
+        songTitleLabel = findViewById(R.id.songTitle);
+        songCurrentDurationLabel = findViewById(R.id.songCurrentDurationLabel);
+        songTotalDurationLabel = findViewById(R.id.songTotalDurationLabel);
+        imgView = findViewById(R.id.imageView);
+
+        RotateAnimation anim = new RotateAnimation(0f, 350f, 15f, 15f);
+        anim.setInterpolator(new LinearInterpolator());
+        anim.setRepeatCount(Animation.INFINITE);
+        anim.setDuration(700);
+
+        imgView.startAnimation(anim);
+        imgView.setAnimation(null);
 
         // Mediaplayer
         mp = new MediaPlayer();
@@ -61,20 +75,17 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
         mp.setOnCompletionListener(this); // Important
 
         // Getting all songs list
-        songsList = songManager.getPlayList(Environment.getDataDirectory().toString());
-        Log.i("xxx", "onCreate: songList " + songsList + " path: " + Environment.getDataDirectory().toString());
-        if(songsList!=null){
-            for(int i=0;i<songsList.size();i++){
-                String fileName=songsList.get(i).get("songTitle");
-                String filePath=songsList.get(i).get("songPath");
-                //here you will get list of file name and file path that present in your device
-                Log.i("xxx "," name ="+fileName +" path = "+filePath);
-            }
-        }
+        songsList = songManager.getPlayList(getApplicationContext());
+        Log.i("xxx", "onCreate: songs List " + songsList);
 
         // By default play first song
-//        playSong(0);
+        playSong(0);
 
+        /*
+         * Play button click event
+         * plays a song and changes button to pause image
+         * pauses a song and changes button to play image
+         * */
         btnPlay.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -98,6 +109,11 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
             }
         });
 
+
+        /*
+         * Next button click event
+         * Plays next song by taking currentSongIndex + 1
+         * */
         btnNext.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -115,6 +131,10 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
             }
         });
 
+        /*
+         * Back button click event
+         * Plays previous song by currentSongIndex - 1
+         * */
         btnPrevious.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -131,6 +151,11 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
             }
         });
 
+
+        /*
+         * Button Click event for Play list click event
+         * Launches list activity which displays list of songs
+         * */
         btnPlaylist.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -142,15 +167,16 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 
     }
 
+    /**
+     * Receiving song index from playlist view
+     * and play the song
+     * */
     @Override
     protected void onActivityResult(int requestCode,
                                     int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if(resultCode == 100){
-            if (data.getExtras() != null) {
-                currentSongIndex = data.getExtras().getInt("songIndex");
-            }
+            currentSongIndex = data.getExtras().getInt("songIndex");
             // play selected song
             playSong(currentSongIndex);
         }
@@ -260,16 +286,16 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
      * */
     @Override
     public void onCompletion(MediaPlayer arg0) {
-
-            if(currentSongIndex < (songsList.size() - 1)){
-                playSong(currentSongIndex + 1);
-                currentSongIndex = currentSongIndex + 1;
-            }else{
-                // play first song
-                playSong(0);
-                currentSongIndex = 0;
-            }
+            // no repeat or shuffle ON - play next song
+        if(currentSongIndex < (songsList.size() - 1)){
+            playSong(currentSongIndex + 1);
+            currentSongIndex = currentSongIndex + 1;
+        } else{
+            // play first song
+            playSong(0);
+            currentSongIndex = 0;
         }
+    }
 
     @Override
     public void onDestroy(){

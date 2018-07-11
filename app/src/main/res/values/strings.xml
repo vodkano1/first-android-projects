@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Autumn Lee</string>
-    <string name="init_text">Chúc Em Nghe Nhạc Vui Vẻ</string>
+    <string name="init_text">Chúc Thu Xinh Đẹp Nghe Nhạc Vui Vẻ</string>
     <string name="song_label">The Good, The Bad And The Ugly</string>
     <string name="go_button">Select to Start App</string>
     <string name="playlist_btn">Select to Open Playlist</string>

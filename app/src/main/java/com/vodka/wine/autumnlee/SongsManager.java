@@ -6,82 +6,55 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.Toast;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
+public class SongsManager {
 
-public class SongsManager{
+    private ArrayList<HashMap<String, String>> songsList = new ArrayList<>();
+//    Context context;
+    ContentResolver contentResolver;
+    Cursor cursor;
+    Uri uri;
 
-    private Context context;
-
-    private List<String> ListElementsArrayList;
-//    List<String> ListElementsArrayList;
     // Constructor
     public SongsManager(){
 
     }
 
-    public void getAllMp3Files() {
-        ContentResolver contentResolver;
+    public ArrayList<HashMap<String, String>> getPlayList(Context context) {
+        HashMap<String, String> song;
         contentResolver = context.getContentResolver();
-        Uri uri = MediaStore.Audio.Media.INTERNAL_CONTENT_URI;
-        Cursor cursor = contentResolver.query(uri, null, null, null, null);
-        if(cursor == null) {
-            Log.i("xxx", "getAllMp3Files: somethings went wrong");
+        uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        cursor = contentResolver.query(uri,
+                null,
+                null,
+                null,
+                null);
+        if (cursor == null) {
+            Log.i("xxx", "Something Went Wrong.");
+
         } else if (!cursor.moveToFirst()) {
-            Log.i("xxx", "no mp3 file");
-        } else {
+            Log.i("xxx", "No Music Found on SD Card.");
+        }
+        else {
             int Title = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-
-            //Getting Song ID From Cursor.
-            //int id = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
-
+            int Path = cursor.getColumnIndex(MediaStore.Audio.Media.DATA);
             do {
-
-                // You can also get the Song ID using cursor.getLong(id).
-                //long SongID = cursor.getLong(id);
-
                 String SongTitle = cursor.getString(Title);
-
+                String SongPath = cursor.getString(Path);
+                song = new HashMap<>();
+                song.put("songTitle", SongTitle);
+                song.put("songPath", SongPath);
                 // Adding Media File Names to ListElementsArrayList.
-
-                ListElementsArrayList.add(SongTitle);
+                songsList.add(song);
+                Log.i("xxx", "getPlayList: show song list: " + songsList);
 
             } while (cursor.moveToNext());
         }
+        Log.i("xxx", "getPlayList: return songs list: " + songsList);
+        return songsList;
     }
-    ArrayList<HashMap<String,String>> getPlayList(String rootPath) {
-        ArrayList<HashMap<String,String>> fileList = new ArrayList<>();
 
-
-        try {
-            File rootFolder = new File(rootPath);
-            Log.i("xxx", "getPlayList: rootFolder " + rootFolder);
-            File[] files = rootFolder.listFiles(); //here you will get NPE if directory doesn't contains  any file,handle it like this.
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    if (getPlayList(file.getAbsolutePath()) != null) {
-                        Log.i("xxx", "getPlayList: file directory " + file.getAbsolutePath());
-                        fileList.addAll(getPlayList(file.getAbsolutePath()));
-                    } else {
-                        break;
-                    }
-                } else if (file.getName().endsWith(".mp3")) {
-                    Log.i("xxx", "getPlayList: file name " + file.getName());
-                    HashMap<String, String> song = new HashMap<>();
-                    song.put("songPath", file.getAbsolutePath());
-                    song.put("songTitle", file.getName());
-                    fileList.add(song);
-                }
-            }
-            return fileList;
-        } catch (Exception e) {
-            Log.i("xxx", "getPlayList: Exception " + e);
-            return null;
-        }
-    }
 }
