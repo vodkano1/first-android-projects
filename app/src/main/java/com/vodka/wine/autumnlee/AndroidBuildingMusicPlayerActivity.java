@@ -297,10 +297,15 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
         }
     }
 
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        mp.release();
-    }
+//    @Override
+//    public void onDestroy(){
+//        super.onDestroy();
+//        mp.release();
+//    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mp.stop();
+    }
 }

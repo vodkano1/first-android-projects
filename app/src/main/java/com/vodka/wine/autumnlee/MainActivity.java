@@ -44,16 +44,22 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View arg0) {
                 Log.i("xxx", "onClick: go to next screen");
                 Intent i = new Intent(getApplicationContext(), AndroidBuildingMusicPlayerActivity.class);
-                song.stop();
+                song.pause();
                 startActivity(i);
             }
         });
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        song.stop();
+    protected void onResume() {
+        super.onResume();
+        song.start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        song.release();
     }
 
     public void AndroidRuntimePermission(){

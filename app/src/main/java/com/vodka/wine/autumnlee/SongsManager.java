@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,10 +34,10 @@ public class SongsManager {
                 null,
                 null);
         if (cursor == null) {
-            Log.i("xxx", "Something Went Wrong.");
+            Toast.makeText(context, "Something went wrong", Toast.LENGTH_LONG);
 
         } else if (!cursor.moveToFirst()) {
-            Log.i("xxx", "No Music Found on SD Card.");
+            Toast.makeText(context, "No Music found on storage", Toast.LENGTH_LONG);
         }
         else {
             int Title = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
