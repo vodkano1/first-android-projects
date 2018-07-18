@@ -2,9 +2,9 @@ package com.vodka.wine.autumnlee;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import android.app.Activity;
+import android.app.Instrumentation;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -35,10 +35,10 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
     private  MediaPlayer mp;
     // Handler to update UI timer, progress bar etc,.
     private Handler mHandler = new Handler();;
-    private SongsManager songManager;
     private Utilities utils;
     private int currentSongIndex = 0;
-    private ArrayList<HashMap<String, String>> songsList = new ArrayList<>();
+    private ArrayList<String> songListTitle = new ArrayList<>();
+    private ArrayList<String> songListPath = new ArrayList<>();
 
 
     @Override
@@ -65,9 +65,10 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
         imgView.startAnimation(anim);
         imgView.setAnimation(null);
 
+        onActivityResult(99,99, this.getIntent());
+
         // Mediaplayer
         mp = new MediaPlayer();
-        songManager = new SongsManager();
         utils = new Utilities();
 
         // Listeners
@@ -75,8 +76,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
         mp.setOnCompletionListener(this); // Important
 
         // Getting all songs list
-        songsList = songManager.getPlayList(getApplicationContext());
-        Log.i("xxx", "onCreate: songs List " + songsList);
+        Log.i("xxx", "onCreate: create Music Player Activity ");
 
         // By default play first song
         playSong(0);
@@ -119,7 +119,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
             @Override
             public void onClick(View arg0) {
                 // check if next song is there or not
-                if(currentSongIndex < (songsList.size() - 1)){
+                if(currentSongIndex < (songListTitle.size() - 1)){
                     playSong(currentSongIndex + 1);
                     currentSongIndex = currentSongIndex + 1;
                 }else{
@@ -144,8 +144,8 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
                     currentSongIndex = currentSongIndex - 1;
                 }else{
                     // play last song
-                    playSong(songsList.size() - 1);
-                    currentSongIndex = songsList.size() - 1;
+                    playSong(songListTitle.size() - 1);
+                    currentSongIndex = songListTitle.size() - 1;
                 }
 
             }
@@ -161,10 +161,16 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
             @Override
             public void onClick(View arg0) {
                 Intent i = new Intent(getApplicationContext(), PlayListActivity.class);
-                startActivityForResult(i, 100);
+                i.putStringArrayListExtra("ListTitles", songListTitle);
+                startActivityForResult(i, 101);
             }
         });
 
+    }
+
+    @Override
+    public Intent getIntent() {
+        return super.getIntent();
     }
 
     /**
@@ -179,6 +185,12 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
             currentSongIndex = data.getExtras().getInt("songIndex");
             // play selected song
             playSong(currentSongIndex);
+        } else if(resultCode == 99) {
+            songListTitle = data.getStringArrayListExtra("ListTitle");
+            songListPath = data.getStringArrayListExtra("ListPath");
+            Log.i("xxx", "onActivityResult: songListTitle: " + songListTitle + " songListPath: " + songListPath);
+        } else {
+            Log.i("xxx", "onActivityResult: Invalid resultCode");
         }
 
     }
@@ -191,11 +203,11 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
         // Play song
         try {
             mp.reset();
-            mp.setDataSource(songsList.get(songIndex).get("songPath"));
+            mp.setDataSource(songListPath.get(songIndex));
             mp.prepare();
             mp.start();
             // Displaying Song title
-            String songTitle = songsList.get(songIndex).get("songTitle");
+            String songTitle = songListTitle.get(songIndex);
             songTitleLabel.setText(songTitle);
 
             // Changing Button Image to pause image
@@ -287,7 +299,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
     @Override
     public void onCompletion(MediaPlayer arg0) {
             // no repeat or shuffle ON - play next song
-        if(currentSongIndex < (songsList.size() - 1)){
+        if(currentSongIndex < (songListTitle.size() - 1)){
             playSong(currentSongIndex + 1);
             currentSongIndex = currentSongIndex + 1;
         } else{

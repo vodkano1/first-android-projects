@@ -3,6 +3,7 @@ package com.vodka.wine.autumnlee;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,15 +11,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
-public class PlayListActivity extends ListActivity {
+public class PlayListActivity extends Activity {
     // Songs list
     public ArrayList<HashMap<String, String>> songsList = new ArrayList<>();
+    public ArrayList<String> listTitle = new ArrayList<>();
     LinearLayout listBH;
+    ListView listView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,51 +29,51 @@ public class PlayListActivity extends ListActivity {
 
         listBH = findViewById(R.id.listBaiHat);
         listBH.setBackgroundResource(R.drawable.bg_thu);
+        listView = findViewById(R.id.listSong);
 
-        ArrayList<HashMap<String, String>> songsListData = new ArrayList<>();
+        onActivityResult(101, 101, this.getIntent());
 
-        SongsManager plm = new SongsManager();
         // get all songs from sdcard
-        this.songsList = plm.getPlayList(getApplicationContext());
-        Log.i("xxx", "songList: " + songsList);
+        Log.i("xxx", "onCreate: create Playlist activity");
 
         // looping through playlist
         for (int i = 0; i < songsList.size(); i++) {
-            // creating new HashMap
-            HashMap<String, String> song = songsList.get(i);
+            // Adding menuItems to ListView
+            ArrayAdapter<?> arrayAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, listTitle);
 
-            // adding HashList to ArrayList
-            songsListData.add(song);
+            listView.setAdapter(arrayAdapter);
+
+            // listening to single listitem click
+            listView.setOnItemClickListener(new OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+
+                    // Starting new intent
+                    Intent in = new Intent(getApplicationContext(),
+                            AndroidBuildingMusicPlayerActivity.class);
+                    // Sending songIndex to PlayerActivity
+                    in.putExtra("songIndex", position);
+                    setResult(100, in);
+                    // Closing PlayListView
+                    finish();
+                }
+            });
+
         }
-        Log.i("xxx", "songsListData: " + songsListData);
-        // Adding menuItems to ListView
-        ListAdapter adapter = new SimpleAdapter(this, songsListData,
-                R.layout.playlist_item, new String[] { "songTitle" }, new int[] {
-                R.id.songTitle });
+    }
 
-        setListAdapter(adapter);
+    @Override
+    public Intent getIntent() {
+        return super.getIntent();
+    }
 
-        // selecting single ListView item
-        ListView lv = getListView();
-        // listening to single listitem click
-        lv.setOnItemClickListener(new OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                // getting listitem index
-                int songIndex = position;
-
-                // Starting new intent
-                Intent in = new Intent(getApplicationContext(),
-                        AndroidBuildingMusicPlayerActivity.class);
-                // Sending songIndex to PlayerActivity
-                in.putExtra("songIndex", songIndex);
-                setResult(100, in);
-                // Closing PlayListView
-                finish();
-            }
-        });
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 101) {
+            listTitle = data.getStringArrayListExtra("ListTitles");
+        }
     }
 }

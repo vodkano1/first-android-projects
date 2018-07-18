@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -50,11 +49,9 @@ public class SongsManager {
                 song.put("songPath", SongPath);
                 // Adding Media File Names to ListElementsArrayList.
                 songsList.add(song);
-                Log.i("xxx", "getPlayList: show song list: " + songsList);
 
             } while (cursor.moveToNext());
         }
-        Log.i("xxx", "getPlayList: return songs list: " + songsList);
         return songsList;
     }
 

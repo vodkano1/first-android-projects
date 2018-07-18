@@ -7,7 +7,7 @@
     android:id="@+id/listBaiHat">
 
     <ListView
-        android:id="@android:id/list"
+        android:id="@+id/listSong"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:divider="#242424"

@@ -15,6 +15,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final int RUNTIME_PERMISSION_CODE = 7;
@@ -23,12 +26,31 @@ public class MainActivity extends AppCompatActivity {
     ImageButton btnGo;
     MediaPlayer song;
 
+    private ArrayList<HashMap<String, String>> songsList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.i("xxx", "onCreate: create main activity");
+
         AndroidRuntimePermission();
+        final ArrayList<String> songsListTitle = new ArrayList<>();
+        final ArrayList<String> songsListPath = new ArrayList<>();
+
+        SongsManager songManager = new SongsManager();
+        songsList = songManager.getPlayList(getApplicationContext());
+        for (int i = 0; i < songsList.size(); i++) {
+            // creating new HashMap
+            HashMap<String, String> song = songsList.get(i);
+
+            // adding HashList to ArrayList
+            songsListTitle.add(song.get("songTitle"));
+            songsListPath.add(song.get("songPath"));
+        }
+        Log.i("xxx", "song title: " + songsListTitle + " song path " + songsListPath);
+
 
         mh = findViewById(R.id.manhinh);
         btnGo = findViewById(R.id.buttonGo);
@@ -45,7 +67,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("xxx", "onClick: go to next screen");
                 Intent i = new Intent(getApplicationContext(), AndroidBuildingMusicPlayerActivity.class);
                 song.pause();
-                startActivity(i);
+                i.putStringArrayListExtra("ListTitle", songsListTitle);
+                i.putStringArrayListExtra("ListPath", songsListPath);
+                startActivityForResult(i, 99);
             }
         });
     }
