@@ -1,10 +1,8 @@
 package com.vodka.wine.autumnlee;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,7 +15,6 @@ import android.widget.ListView;
 
 public class PlayListActivity extends Activity {
     // Songs list
-    public ArrayList<HashMap<String, String>> songsList = new ArrayList<>();
     public ArrayList<String> listTitle = new ArrayList<>();
     LinearLayout listBH;
     ListView listView;
@@ -36,10 +33,8 @@ public class PlayListActivity extends Activity {
         // get all songs from sdcard
         Log.i("xxx", "onCreate: create Playlist activity");
 
-        // looping through playlist
-        for (int i = 0; i < songsList.size(); i++) {
             // Adding menuItems to ListView
-            ArrayAdapter<?> arrayAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, listTitle);
+            ArrayAdapter<?> arrayAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.playlist_item, listTitle);
 
             listView.setAdapter(arrayAdapter);
 
@@ -60,8 +55,6 @@ public class PlayListActivity extends Activity {
                     finish();
                 }
             });
-
-        }
     }
 
     @Override
